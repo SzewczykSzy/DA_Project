@@ -12,14 +12,12 @@ parameters {
 }
 
 model {
-  alpha ~ normal(0.0205, 0.003);
-  beta_age ~ normal(0.0608, 0.001);
+  alpha ~ normal(0.0215, 0.003);
+  beta_age ~ normal(0.0618, 0.001);
   beta_sex ~ normal(1.4, 0.02);
 
     for (i in 1:N) {
         real p = alpha * exp(beta_age * age[i]) * (beta_sex ^ sex[i])/100;
-        // if (p[i] > 1) p[i] = 1;
-        // else if (p[i] < 0) p[i] = 0;
         p = fmin(fmax(p, 0), 1);
 
         death[i] ~ bernoulli(p);
@@ -33,8 +31,6 @@ generated quantities {
   for (i in 1:N) {
     real p = alpha * exp(beta_age * age[i]) * pow(beta_sex, sex[i]) / 100;
     p = fmin(fmax(p, 0), 1);
-    // if (p[i] > 1) p[i] = 1;
-    // else if (p[i] < 0) p[i] = 0;
 
     log_lik[i] = bernoulli_lpmf(death[i] | p);
 
