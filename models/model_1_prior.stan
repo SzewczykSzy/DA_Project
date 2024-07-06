@@ -13,14 +13,9 @@ generated quantities {
   array[N] int<lower=0, upper=1> death;
 
 
-  // for (n in 1:N) {
-  //   p[n] = alpha *  beta_sex * sex[n] * exp(beta_age * age[n]);
-  //   // p[n] = inv_logit(logit_p[n]); // Convert logit to probability
-  //   death[n] = bernoulli_rng(p[n]); // Simulate death outcome
-  // }
   for (n in 1:N) {
     p[n] = alpha * exp(beta_age * age[n]) * (beta_sex ^ sex[n])/100;
-    // Ensure p is within bounds [0, 1]
+
     if (p[n] > 1) p[n] = 1;
     else if (p[n] < 0) p[n] = 0;
     death[n] = bernoulli_rng(p[n]); // Simulate death outcome
