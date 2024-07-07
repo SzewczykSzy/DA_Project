@@ -11,21 +11,19 @@ parameters {
   real b;
   real c;
   real d;
-  // real e;
   real f;
 }
 
 model {
-  a ~ normal(0.0215, 0.003);
-  b ~ normal(0.0618, 0.001);
-  c ~ normal(1.4, 0.02);
+  a ~ normal(0.22, 0.05);
+  b ~ normal(0.0608, 0.01);
+  c ~ normal(1.4, 0.04);
 
-  d ~ normal(9.4, 0.5);
-  // e ~ normal(13, 2);
-  f ~ normal(6.2, 0.3);
+  d ~ normal(14, 4);
+  f ~ normal(6, 0.6);
 
     for (i in 1:N) {
-        real p = (a * exp(b * age[i]) * (c ^ sex[i])) * (d * exp(-((hospital_days[i] - 14)^2)/(2*f^2)))/100;
+        real p = (a * exp(b * age[i]) * (c ^ sex[i])) * (exp(-((hospital_days[i] - d)^2)/(2*f^2)))/100;
 
         p = fmin(fmax(p, 0), 1);
 
@@ -38,7 +36,7 @@ generated quantities {
     array[N] real log_lik;
 
   for (i in 1:N) {
-    real p = (a * exp(b * age[i]) * pow(c, sex[i])) * (d * exp(-((hospital_days[i] - 14)^2)/(2*f^2))) / 100;
+    real p = (a * exp(b * age[i]) * pow(c, sex[i])) * (exp(-((hospital_days[i] - d)^2)/(2*f^2))) / 100;
     p = fmin(fmax(p, 0), 1);
 
     log_lik[i] = bernoulli_lpmf(death[i] | p);
